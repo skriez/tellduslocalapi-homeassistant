@@ -22,21 +22,17 @@ REQUIREMENTS = ['tellduslocalapi==0.0.1']
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_PUBLIC_KEY = 'public_key'
-CONF_PRIVATE_KEY = 'private_key'
 CONF_TOKEN = 'token'
-CONF_TOKEN_SECRET = 'token_secret'
+CONF_HOST = 'host'
 CONF_UPDATE_INTERVAL = 'update_interval'
 
-MIN_UPDATE_INTERVAL = timedelta(seconds=5)
+MIN_UPDATE_INTERVAL = timedelta(milliseconds=500)
 DEFAULT_UPDATE_INTERVAL = timedelta(minutes=1)
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
-        vol.Required(CONF_PUBLIC_KEY): cv.string,
-        vol.Required(CONF_PRIVATE_KEY): cv.string,
         vol.Required(CONF_TOKEN): cv.string,
-        vol.Required(CONF_TOKEN_SECRET): cv.string,
+        vol.Required(CONF_HOST): cv.string,
         vol.Optional(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): (
             vol.All(cv.time_period, vol.Clamp(min=MIN_UPDATE_INTERVAL)))
     }),
@@ -71,10 +67,8 @@ class TelldusLiveClient(object):
         """Initialize the Tellus data object."""
         from tellduslive import Client
 
-        public_key = config[DOMAIN].get(CONF_PUBLIC_KEY)
-        private_key = config[DOMAIN].get(CONF_PRIVATE_KEY)
         token = config[DOMAIN].get(CONF_TOKEN)
-        token_secret = config[DOMAIN].get(CONF_TOKEN_SECRET)
+        host = config[DOMAIN].get(CONF_HOST)
 
         self.entities = []
 
@@ -84,10 +78,7 @@ class TelldusLiveClient(object):
         self._interval = config[DOMAIN].get(CONF_UPDATE_INTERVAL)
         _LOGGER.debug('Update interval %s', self._interval)
 
-        self._client = Client(public_key,
-                              private_key,
-                              token,
-                              token_secret)
+        self._client = Client(host, token)
 
     def validate_session(self):
         """Make a request to see if the session is valid."""
