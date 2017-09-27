@@ -16,7 +16,7 @@ from homeassistant.helpers.event import track_point_in_utc_time
 from homeassistant.util.dt import utcnow
 import voluptuous as vol
 
-DOMAIN = 'tellduslive'
+DOMAIN = 'tellduslocalapi'
 
 REQUIREMENTS = ['tellduslocalapi==0.0.1']
 
